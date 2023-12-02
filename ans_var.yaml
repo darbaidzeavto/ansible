@@ -1,0 +1,6 @@
+ans_install: nginx,nodejs,git
+repo_url: https://github.com/fropa/nodejs-hello.git
+repo_dest: /tmp/repo-tmp/
+node_service: /usr/local/bin/pm2
+conf_sorce: /etc/ansible/files/nodejs.conf
+conf_dest: /etc/nginx/conf.d/nodejs.conf

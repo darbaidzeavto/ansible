@@ -1,0 +1,47 @@
+- name: Deployment
+  hosts: all
+  become: true
+
+  vars_files:
+    - ans_var.yaml
+
+  tasks:
+
+    - name: install packages
+      yum:
+        name: "{{ ans_install }}"
+        state: present
+
+    - name: install pm2 package
+      command: npm install pm2@latest -g
+
+    - name: clone project
+      git:
+        repo: "{{ repo_url }}"
+        dest: "{{ repo_dest }}"
+
+    - name: start app using pm2
+      become: yes
+      command: "{{ node_service }} start {{ repo_dest }}"
+
+    - name: copy config
+      copy:
+        src: "{{ conf_sorce }}"
+        dest: "{{ conf_dest }}"
+        owner: nginx
+        group: nginx
+        mode: 0644
+
+    - name: start and enable nginx
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+
+    - name: check connection
+      become: yes
+      command: curl -k http://localhost
+      register: output
+
+    - name: show te value of output
+      debug: var=output
